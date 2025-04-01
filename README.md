@@ -2,7 +2,7 @@
 
 This project simulates a cellular network handover system where Mobile Stations (MS) connect to the nearest Base Transceiver Station (BTS) managed by a Base Station Controller (BSC).
 
-### ✅ Features
+###  Features
 - Each BTS has 8 time slots to connect to MS devices.
 - MS connects to the closest available BTS.
 - If full, MS connects to the next closest.
@@ -11,7 +11,7 @@ This project simulates a cellular network handover system where Mobile Stations 
 
 ---
 
-## 🧠 How It Works
+##  How It Works
 
 - Distance is calculated using 3D Euclidean formula.
 - BTS and MS are modeled using C++ classes.
@@ -20,7 +20,7 @@ This project simulates a cellular network handover system where Mobile Stations 
 
 ---
 
-## 🛠️ Compile and Run
+## 🛠 Compile and Run
 
 Make sure you have a C++ compiler (like `g++`), then:
 
@@ -31,7 +31,7 @@ g++ -o bts_handover main.cpp
 
 ---
 
-## 📂 Files
+##  Files
 
 - `main.cpp` – Source code for simulation
 - `report.md` – Algorithm and testing description
@@ -39,6 +39,6 @@ g++ -o bts_handover main.cpp
 
 ---
 
-## 👩‍💻 Author
+##  Author
 
 Yasmine Elsisi – [GitHub](https://github.com/YasmineElsisi)
