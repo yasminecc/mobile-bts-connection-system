@@ -1,31 +1,72 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32819.101
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CPE Assignment 3.4", "CPE Assignment 3.4\CPE Assignment 3.4.vcxproj", "{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Debug|x64.ActiveCfg = Debug|x64
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Debug|x64.Build.0 = Debug|x64
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Debug|x86.ActiveCfg = Debug|Win32
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Debug|x86.Build.0 = Debug|Win32
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Release|x64.ActiveCfg = Release|x64
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Release|x64.Build.0 = Release|x64
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Release|x86.ActiveCfg = Release|Win32
-		{7CE3D57E-0BC2-4CC4-8C6E-FB464FD128CC}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {71CC1E83-855B-405D-9C1B-062492A69949}
-	EndGlobalSection
-EndGlobal
+/*
+ * GLCM Texture Analyzer
+ * Author: Yasmine Elsisi
+ * Date: April 2025
+ * 
+ * Description:
+ * This C++ program computes the Gray Level Co-occurrence Matrix (GLCM) for a grayscale image
+ * and calculates texture features such as contrast, energy, and homogeneity.
+ */
+
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <vector>
+#include <iomanip>
+
+using namespace std;
+
+int main() {
+    int rows, cols;
+    ifstream input("sample-input.txt");
+    if (!input) {
+        cerr << "Error: Unable to open input file." << endl;
+        return 1;
+    }
+
+    input >> rows >> cols;
+    vector<vector<int>> matrix(rows, vector<int>(cols));
+    int max_gray = 0;
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j) {
+            input >> matrix[i][j];
+            max_gray = max(max_gray, matrix[i][j]);
+        }
+
+    // Initialize GLCM matrix
+    vector<vector<int>> glcm(max_gray + 1, vector<int>(max_gray + 1, 0));
+
+    // Compute GLCM for direction θ = 0 (horizontal, right neighbor)
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols - 1; ++j)
+            glcm[matrix[i][j]][matrix[i][j + 1]]++;
+
+    // Normalize GLCM
+    double total = 0;
+    for (auto& row : glcm)
+        for (int val : row)
+            total += val;
+
+    vector<vector<double>> norm_glcm(max_gray + 1, vector<double>(max_gray + 1));
+    for (int i = 0; i <= max_gray; ++i)
+        for (int j = 0; j <= max_gray; ++j)
+            norm_glcm[i][j] = glcm[i][j] / total;
+
+    // Compute texture features
+    double contrast = 0, energy = 0, homogeneity = 0;
+    for (int i = 0; i <= max_gray; ++i)
+        for (int j = 0; j <= max_gray; ++j) {
+            double p = norm_glcm[i][j];
+            contrast += (i - j) * (i - j) * p;
+            energy += p * p;
+            homogeneity += p / (1 + abs(i - j));
+        }
+
+    cout << fixed << setprecision(4);
+    cout << "Contrast: " << contrast << endl;
+    cout << "Energy: " << energy << endl;
+    cout << "Homogeneity: " << homogeneity << endl;
+
+    return 0;
+}
